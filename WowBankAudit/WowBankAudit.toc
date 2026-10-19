@@ -1,0 +1,17 @@
+## Interface: 120105
+## Title: Bank Audit
+## Notes: Audits deposits and withdrawals of gold and trade goods in your Bank and Warband Bank, per tab.
+## Author: mattgormanca
+## Version: 1.0.0
+## SavedVariables: WowBankAuditDB
+## IconTexture: Interface\Icons\INV_Misc_Coin_02
+## AddonCompartmentFunc: WowBankAudit_OnAddonCompartmentClick
+## AddonCompartmentFuncOnEnter: WowBankAudit_OnAddonCompartmentEnter
+## AddonCompartmentFuncOnLeave: WowBankAudit_OnAddonCompartmentLeave
+## Category: Inventory
+
+Core.lua
+Diff.lua
+Scanner.lua
+UI.lua
+Options.lua
