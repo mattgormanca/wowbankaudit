@@ -1,4 +1,4 @@
--- Minimal stand-ins for the WoW client API used by Core.lua, Diff.lua and Scanner.lua.
+-- Minimal stand-ins for the WoW client API used by Core.lua, Diff.lua, Scanner.lua and Crafting.lua.
 Mock = { frames = {}, timers = {}, now = 0, bags = {}, tabData = {}, money = 0, printed = {} }
 
 date = os.date
@@ -75,6 +75,23 @@ C_Item = {}
 function C_Item.GetItemInfoInstant(itemID)
     return itemID, "type", "subtype", "", 134400, Mock.itemClass[itemID] or 0, 0
 end
+-- Counts from Mock.bags: 0-5 are bags, 6-11 the character bank, 12-16 the warband bank.
+function C_Item.GetItemCount(itemID, includeBank, _, includeReagentBank, includeAccountBank)
+    local total = 0
+    for bag, b in pairs(Mock.bags) do
+        local inScope = bag <= 5
+            or (bag <= 11 and includeBank)
+            or (bag >= 12 and includeAccountBank)
+        if inScope then
+            for _, item in pairs(b.items) do
+                if item[1] == itemID then
+                    total = total + item[2]
+                end
+            end
+        end
+    end
+    return total
+end
 function C_Item.GetItemInfo(itemID)
     return "Item" .. itemID, "|cffffffff|Hitem:" .. itemID .. "|h[Item" .. itemID .. "]|h|r"
 end
@@ -118,7 +135,7 @@ function Mock.ChangeBags(...)
 end
 
 function Mock.LoadAddon(dir, ns)
-    for _, file in ipairs({ "Core.lua", "Diff.lua", "Scanner.lua" }) do
+    for _, file in ipairs({ "Core.lua", "Diff.lua", "Scanner.lua", "Crafting.lua" }) do
         local chunk = assert(loadfile(dir .. "/" .. file))
         chunk("WowBankAudit", ns)
     end

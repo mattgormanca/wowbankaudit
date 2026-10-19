@@ -204,7 +204,7 @@ function ns:FormatEntryForChat(e)
     if e.kind == "deposit" then
         verb = "Deposited"
     elseif e.kind == "withdraw" then
-        verb = "Withdrew"
+        verb = e.craft and "Used for crafting" or "Withdrew"
     else
         verb = "Moved"
         where = where .. " -> " .. self:TabLabel(e.toBank, e.toTab, e.toTabName)
@@ -285,7 +285,7 @@ function ns:Direction(entry, bank, tab)
 end
 
 -- filter = { bank = <required>, tab = <index|nil>, who = <charKey|nil>,
---            kind = "all"|"deposit"|"withdraw"|"move"|"gold"|"items"|"unrecorded", search = <string|nil> }
+--            kind = "all"|"deposit"|"withdraw"|"move"|"craft"|"gold"|"items"|"unrecorded", search = <string|nil> }
 -- Returns matching entries, newest first. Each result is { entry = e, dir = "in"|"out"|"internal" }.
 function ns:QueryLog(filter)
     local results = {}
@@ -306,6 +306,8 @@ function ns:QueryLog(filter)
                 ok = dir == "out"
             elseif kind == "move" then
                 ok = e.kind == "move"
+            elseif kind == "craft" then
+                ok = e.craft == true
             elseif kind == "gold" then
                 ok = e.money ~= nil
             elseif kind == "items" then
