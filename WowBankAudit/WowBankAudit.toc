@@ -13,5 +13,6 @@
 Core.lua
 Diff.lua
 Scanner.lua
+Crafting.lua
 UI.lua
 Options.lua

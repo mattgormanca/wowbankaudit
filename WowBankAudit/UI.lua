@@ -33,6 +33,7 @@ local KIND_OPTIONS = {
     { value = "deposit", text = "Deposits / in" },
     { value = "withdraw", text = "Withdrawals / out" },
     { value = "move", text = "Tab transfers" },
+    { value = "craft", text = "Used for crafting" },
     { value = "items", text = "Items only" },
     { value = "gold", text = "Gold only" },
     { value = "unrecorded", text = "Unrecorded changes" },
@@ -118,7 +119,7 @@ local function DescribeEntry(e, dir)
         action, color = "Deposit", COLOR_IN
         tabText = ShortTab(e.bank, e.tab, e.tabName)
     else
-        action, color = "Withdraw", COLOR_OUT
+        action, color = e.craft and "Crafting" or "Withdraw", COLOR_OUT
         tabText = ShortTab(e.bank, e.tab, e.tabName)
     end
     action = Colorize(color, action)
@@ -155,6 +156,9 @@ local function Row_OnEnter(row)
         GameTooltip:AddLine(ns:FormatEntryForChat(e), 1, 1, 1, true)
         GameTooltip:AddDoubleLine("When", date("%Y-%m-%d %H:%M:%S", e.t), nil, nil, nil, 1, 1, 1)
         GameTooltip:AddDoubleLine("Character", ns:ColorCharacter(e.who))
+        if e.craft then
+            GameTooltip:AddLine("Taken from the bank by a profession while crafting.", 0.6, 0.6, 0.6, true)
+        end
         if e.unrecorded then
             GameTooltip:AddLine("* Happened while Bank Audit was not watching (another PC, the addon disabled, or a character without it).", 0.6, 0.6, 0.6, true)
             if e.detectedBy then
@@ -511,7 +515,7 @@ function UI:BuildCsv()
     local lines = { "time,character,bank,tab,action,item,itemID,count,copper,gold,to_bank,to_tab,unrecorded" }
     for _, r in ipairs(ns:QueryLog(self:GetFilter())) do
         local e = r.entry
-        local action = e.kind
+        local action = e.craft and "craft" or e.kind
         if e.kind == "move" then
             action = r.dir == "internal" and "move" or (r.dir == "in" and "transfer_in" or "transfer_out")
         end

@@ -15,6 +15,9 @@ shown separately, and every entry records which tab it touched.
   "Transfer out".
 - **Who did it.** Every entry records the character, so you can see which alt took what from the
   shared Warband Bank. Filter by character.
+- **Crafting from the bank is attributed.** When a profession pulls reagents straight from your
+  Bank or Warband Bank, the entry shows as "Crafting" under the character that crafted, not as an
+  unrecorded change. Filter with *Used for crafting*.
 - **Unrecorded change detection.** When a bank is opened it is compared with the last contents the
   addon saw. Differences (another PC, a character without the addon, the addon disabled) are
   logged and marked with `*`.
@@ -60,6 +63,11 @@ of both banks (`C_Bank.FetchPurchasedBankTabData`, `C_Container`) and the Warban
 (`ACCOUNT_MONEY`), it takes a new snapshot, diffs it against the previous one and writes entries
 for the differences. Item losses and gains in the same scan are paired up as transfers.
 
+Professions can use reagents from both banks without visiting a banker. While a profession window
+is open, the addon watches the bank share of each stored item's count (`C_Item.GetItemCount` with
+the bank flags) and logs any drop as crafting use by the current character, taking it out of the
+stored snapshot so the next bank visit doesn't report it again.
+
 Data is stored account-wide in `WTF/Account/<account>/SavedVariables/WowBankAudit.lua`, so the
 shared Warband Bank snapshot and log are the same on every character. Character bank snapshots are
 kept per character.
@@ -71,6 +79,10 @@ kept per character.
   character with the addon opens the bank (these are the `*` entries).
 - Changes made in the first ~1.5 seconds after opening the bank, while contents are still loading,
   are also logged as unrecorded.
+- The client doesn't say which tab crafting reagents came from, so they are taken from the tabs
+  holding the item in tab order. If the game used a different tab, the next bank visit shows the
+  difference as an unrecorded move.
+- Crafting is only attributed for items in a stored snapshot, so visit a banker once first.
 - Guild banks are not tracked.
 
 ## Development
