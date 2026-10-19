@@ -1,4 +1,4 @@
-## Interface: 110200, 110205, 110207, 120000, 120001, 120005, 120007
+## Interface: 120105
 ## Title: Bank Audit
 ## Notes: Audits deposits and withdrawals of gold and trade goods in your Bank and Warband Bank, per tab.
 ## Author: mattgormanca
